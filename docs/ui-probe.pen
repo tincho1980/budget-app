@@ -1,0 +1,168 @@
+{
+  "version": "2.14",
+  "children": [
+    {
+      "type": "frame",
+      "id": "probe1",
+      "x": 0,
+      "y": 0,
+      "name": "Probe",
+      "clip": true,
+      "width": 900,
+      "height": 520,
+      "fill": "#09090C",
+      "layout": "none",
+      "children": [
+        {
+          "type": "rectangle",
+          "id": "card01",
+          "x": 40,
+          "y": 40,
+          "width": 380,
+          "height": 180,
+          "fill": "#131419",
+          "cornerRadius": 16,
+          "strokeColor": "#2A2B31",
+          "strokeWidth": 1,
+          "name": "Card cornerRadius+strokeColor"
+        },
+        {
+          "type": "rectangle",
+          "id": "card02",
+          "x": 460,
+          "y": 40,
+          "width": 380,
+          "height": 180,
+          "fill": "#131419",
+          "borderRadius": 16,
+          "stroke": "#2A2B31",
+          "name": "Card borderRadius+stroke"
+        },
+        {
+          "type": "text",
+          "id": "txt01",
+          "x": 64,
+          "y": 70,
+          "width": 330,
+          "height": 40,
+          "text": "Propiedad: text",
+          "fontFamily": "Geist",
+          "fontSize": 24,
+          "fontWeight": 600,
+          "fill": "#FFFFFF",
+          "name": "Texto via text"
+        },
+        {
+          "type": "text",
+          "id": "txt02",
+          "x": 64,
+          "y": 120,
+          "width": 330,
+          "height": 30,
+          "characters": "Propiedad: characters",
+          "fontFamily": "Geist",
+          "fontSize": 16,
+          "fontWeight": 400,
+          "color": "#C7CBD6",
+          "name": "Texto via characters"
+        },
+        {
+          "type": "text",
+          "id": "txt03",
+          "x": 484,
+          "y": 70,
+          "width": 330,
+          "height": 40,
+          "text": "$ 1.250.000,00",
+          "fontFamily": "Geist Mono",
+          "fontSize": 28,
+          "fontWeight": 600,
+          "fill": "#6EE7A0",
+          "letterSpacing": -0.5,
+          "name": "Monto mono"
+        },
+        {
+          "type": "rectangle",
+          "id": "badge1",
+          "x": 484,
+          "y": 130,
+          "width": 90,
+          "height": 26,
+          "fill": "#3B2410",
+          "cornerRadius": 6,
+          "name": "Badge fondo"
+        },
+        {
+          "type": "text",
+          "id": "txt04",
+          "x": 496,
+          "y": 135,
+          "width": 70,
+          "height": 18,
+          "text": "Vencida",
+          "fontFamily": "Geist",
+          "fontSize": 13,
+          "fontWeight": 500,
+          "fill": "#FCA5A5",
+          "name": "Badge texto"
+        },
+        {
+          "type": "frame",
+          "id": "auto01",
+          "x": 40,
+          "y": 260,
+          "width": 380,
+          "height": 200,
+          "fill": "#131419",
+          "cornerRadius": 16,
+          "layout": "vertical",
+          "gap": 12,
+          "padding": 20,
+          "name": "Autolayout vertical",
+          "children": [
+            {
+              "type": "text",
+              "id": "txt05",
+              "text": "Autolayout: layout/gap/padding",
+              "fontFamily": "Geist",
+              "fontSize": 15,
+              "fontWeight": 600,
+              "fill": "#FFFFFF",
+              "width": 340,
+              "height": 22,
+              "x": 0,
+              "y": 0,
+              "name": "AL titulo"
+            },
+            {
+              "type": "rectangle",
+              "id": "btn01",
+              "x": 0,
+              "y": 0,
+              "width": 200,
+              "height": 44,
+              "fill": "#0047AB",
+              "cornerRadius": 8,
+              "name": "Boton primario"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "txt06",
+          "x": 460,
+          "y": 268,
+          "width": 380,
+          "height": 160,
+          "text": "Si ves este bloque con la tipografia Geist, los dos recuadros de arriba con esquinas redondeadas y borde, el monto en verde y el boton azul, el formato funciona y sigo con las nueve pantallas.",
+          "fontFamily": "Geist",
+          "fontSize": 15,
+          "fontWeight": 400,
+          "fill": "#8A8F9C",
+          "lineHeight": 22,
+          "name": "Instrucciones"
+        }
+      ]
+    }
+  ]
+}
