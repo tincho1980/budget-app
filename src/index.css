@@ -1,1 +1,34 @@
 @import "tailwindcss";
+
+@theme {
+  --color-bg: #09090C;
+  --color-surface: #131419;
+  --color-surface-hover: #1A1B21;
+  --color-border-subtle: rgb(255 255 255 / 0.10);
+  --color-border-strong: rgb(255 255 255 / 0.18);
+
+  --color-primary: #0047AB;
+  --color-primary-hover: #0055CC;
+  --color-accent: #2E7FD9;
+
+  --color-text: #FFFFFF;
+  --color-text-muted: #C7CBD6;
+  --color-text-subtle: #8A8F9C;
+
+  --color-state-pending: #FCD34D;
+  --color-state-partial: #7FB3EA;
+  --color-state-paid: #6EE7A0;
+  --color-state-overdue: #FCA5A5;
+
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, monospace;
+
+  --radius-control: 8px;
+  --radius-card: 16px;
+}
+
+@layer base {
+  body {
+    @apply bg-bg font-sans text-sm text-text antialiased;
+  }
+}
