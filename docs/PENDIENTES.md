@@ -15,5 +15,5 @@
 
 ## Contrato y entrega
 
-- [ ] Completar el contrato de los endpoints a medida que se conectan. Registrar métodos, rutas, autenticación, campos, estados HTTP y ejemplos reales de éxito y error. Reutilizar el README y la colección de Postman de [`budget-api`](https://github.com/tincho1980/budget-api/blob/develop/README.md#api-v1).
+- [ ] Ampliar el [contrato de la API](CONTRATO-API.md) con presupuestos, estado de cuenta y pagos. Registrar métodos, rutas, autenticación, campos, estados HTTP y ejemplos de éxito y error.
 - [ ] Documentar en el README del frontend cómo levantar ambos proyectos, usar los datos de demo, ejecutar las pruebas y acceder al deploy. Mantener las variables de ejemplo sin secretos.

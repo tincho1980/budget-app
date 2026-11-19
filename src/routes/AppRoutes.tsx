@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom'
 import { Layout } from '../components/Layout.tsx'
 import { Account } from '../pages/Account'
 import { Login } from '../pages/Login'
+import { ProjectDetail } from '../pages/ProjectDetail'
 import { Projects } from '../pages/Projects'
 import { ReportPayment } from '../pages/ReportPayment'
 import { ProtectedRoute } from './ProtectedRoute'
@@ -13,6 +14,7 @@ export function AppRoutes() {
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
           <Route index element={<Projects />} />
+          <Route path="projects/:id" element={<ProjectDetail />} />
           <Route path="account" element={<Account />} />
           <Route path="payments/new" element={<ReportPayment />} />
         </Route>
