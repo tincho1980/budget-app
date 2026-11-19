@@ -61,6 +61,52 @@ Respuesta `200` de ejemplo para `GET /projects/12`:
 }
 ```
 
+## Presupuestos
+
+| Método y ruta | Autenticación | Entrada | Respuesta |
+|---|---|---|---|
+| `GET /budgets/:id` | Bearer | `id` del presupuesto en la ruta. | `200` con `{ "budget": { ... } }`. |
+| `POST /budgets/:id/approve` | Bearer | `id` en la ruta, sin cuerpo. | `200` con el presupuesto actualizado a `approved`. |
+| `POST /budgets/:id/reject` | Bearer | `id` en la ruta, sin cuerpo. | `200` con el presupuesto actualizado a `rejected`. |
+
+Los tres endpoints devuelven `404` si el presupuesto no existe, es interno (`draft`) o pertenece a otro cliente. Las decisiones se aceptan únicamente desde `sent`. Un `422` incluye el motivo en `error.details`. Un proyecto solo puede tener un presupuesto aprobado.
+
+Ejemplo de respuesta `200` de `GET /budgets/20` antes de decidir:
+
+```json
+{
+  "budget": {
+    "id": 20,
+    "version": 2,
+    "status": "sent",
+    "sent_at": "2026-10-24T12:00:00Z",
+    "approved_at": null,
+    "notes": null,
+    "total": "4800000.00",
+    "signed_document_url": null,
+    "project": { "id": 12, "name": "Sitio institucional" },
+    "estimated_hours": "3.50",
+    "modules": [
+      { "name": "Diseño", "items": [{ "description": "Sistema visual", "estimated_hours": "3.50" }] }
+    ]
+  }
+}
+```
+
+`total` y `estimated_hours` son strings decimales. Las fechas usan el formato ISO 8601 o `null`. `notes` y `signed_document_url` también pueden ser `null`. La API entrega las tareas facturables agrupadas por módulo, con horas estimadas. La aprobación rellena `approved_at`; el rechazo deja ese campo en `null`.
+
+Ejemplo de error `422` al intentar decidir un presupuesto que ya cambió de estado:
+
+```json
+{
+  "error": {
+    "status": 422,
+    "message": "No se pudo registrar la decisión.",
+    "details": ["Sólo se puede aprobar o rechazar un presupuesto enviado."]
+  }
+}
+```
+
 ## Errores
 
 Rails devuelve un objeto `error` con `status` (número), `message` (texto) y `details` (lista de mensajes, opcional). Ejemplo de `404`:

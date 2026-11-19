@@ -1,14 +1,7 @@
 import { apiRequest } from './client'
+import type { BudgetSummary } from './budgets'
 
 export type ProjectStatus = 'survey' | 'in_progress' | 'delivered' | 'closed'
-export type BudgetStatus = 'sent' | 'approved' | 'rejected'
-
-type ProjectBudget = {
-  id: number
-  version: number
-  status: BudgetStatus
-  total: string
-}
 
 export type Project = {
   id: number
@@ -17,10 +10,10 @@ export type Project = {
   status: ProjectStatus
   started_on: string | null
   closed_on: string | null
-  current_budget: (ProjectBudget & { pending_approval: boolean }) | null
+  current_budget: (BudgetSummary & { pending_approval: boolean }) | null
 }
 
-export type ProjectDetail = Project & { budgets: ProjectBudget[] }
+export type ProjectDetail = Project & { budgets: BudgetSummary[] }
 
 export const projectKeys = {
   list: ['projects'] as const,

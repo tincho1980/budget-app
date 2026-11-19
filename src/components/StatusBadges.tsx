@@ -1,4 +1,5 @@
-import type { BudgetStatus, ProjectStatus } from '../api/projects'
+import type { BudgetStatus } from '../api/budgets'
+import type { ProjectStatus } from '../api/projects'
 
 const toneClasses = {
   neutral: 'bg-border-subtle text-text-muted',

@@ -32,9 +32,17 @@ function ProjectContent({ project }: { project: ProjectDetailData }) {
             <p className="text-text-muted">Versión {current.version}</p>
             <BudgetStatusBadge status={current.status} />
           </div>
-          <div className="space-y-1 text-right">
-            <p className="text-sm text-text-muted">Total</p>
-            <p className="font-mono text-xl font-semibold tabular-nums">{formatMoney(current.total)}</p>
+          <div className="flex flex-wrap items-center gap-5">
+            <div className="space-y-1 sm:text-right">
+              <p className="text-sm text-text-muted">Total</p>
+              <p className="font-mono text-xl font-semibold tabular-nums">{formatMoney(current.total)}</p>
+            </div>
+            <Link
+              to={`/budgets/${current.id}`}
+              className="inline-flex rounded-control bg-primary px-5 py-3 font-semibold text-white hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+            >
+              Ver presupuesto
+            </Link>
           </div>
         </section>
       ) : (
@@ -48,7 +56,12 @@ function ProjectContent({ project }: { project: ProjectDetailData }) {
             {previous.map((budget) => (
               <li key={budget.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-3">
                 <div className="flex flex-wrap items-center gap-3">
-                  <span>Versión {budget.version}</span>
+                  <Link
+                    to={`/budgets/${budget.id}`}
+                    className="rounded-control underline underline-offset-4 hover:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+                  >
+                    Versión {budget.version}
+                  </Link>
                   <BudgetStatusBadge status={budget.status} />
                 </div>
                 <span className="font-mono tabular-nums">{formatMoney(budget.total)}</span>
