@@ -15,5 +15,5 @@
 
 ## Contrato y entrega
 
-- [ ] Ampliar el [contrato de la API](CONTRATO-API.md) con estado de cuenta y pagos. Registrar métodos, rutas, autenticación, campos, estados HTTP y ejemplos de éxito y error.
+- [x] Documentar las operaciones que usa el portal en el [contrato de la API](CONTRATO-API.md).
 - [ ] Documentar en el README del frontend cómo levantar ambos proyectos, usar los datos de demo, ejecutar las pruebas y acceder al deploy. Mantener las variables de ejemplo sin secretos.

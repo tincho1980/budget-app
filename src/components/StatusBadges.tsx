@@ -1,4 +1,6 @@
+import type { ChargeStatus } from '../api/account'
 import type { BudgetStatus } from '../api/budgets'
+import type { PaymentStatus } from '../api/payments'
 import type { ProjectStatus } from '../api/projects'
 
 const toneClasses = {
@@ -27,6 +29,19 @@ const budgetStatuses = {
   rejected: { label: 'Rechazado', tone: 'danger' },
 } satisfies Record<BudgetStatus, BadgeProps>
 
+const chargeStatuses = {
+  pending: { label: 'Pendiente', tone: 'pending' },
+  partial: { label: 'Parcial', tone: 'info' },
+  paid: { label: 'Pagada', tone: 'success' },
+  overdue: { label: 'Vencida', tone: 'danger' },
+} satisfies Record<ChargeStatus, BadgeProps>
+
+const paymentStatuses = {
+  pending_review: { label: 'En revisión', tone: 'pending' },
+  confirmed: { label: 'Confirmado', tone: 'success' },
+  rejected: { label: 'Rechazado', tone: 'danger' },
+} satisfies Record<PaymentStatus, BadgeProps>
+
 function Badge({ label, tone }: BadgeProps) {
   return <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium ${toneClasses[tone]}`}>{label}</span>
 }
@@ -37,4 +52,12 @@ export function ProjectStatusBadge({ status }: { status: ProjectStatus }) {
 
 export function BudgetStatusBadge({ status }: { status: BudgetStatus }) {
   return <Badge {...budgetStatuses[status]} />
+}
+
+export function ChargeStatusBadge({ status }: { status: ChargeStatus }) {
+  return <Badge {...chargeStatuses[status]} />
+}
+
+export function PaymentStatusBadge({ status }: { status: PaymentStatus }) {
+  return <Badge {...paymentStatuses[status]} />
 }

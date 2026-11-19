@@ -107,6 +107,72 @@ Ejemplo de error `422` al intentar decidir un presupuesto que ya cambió de esta
 }
 ```
 
+## Estado de cuenta
+
+`GET /account` requiere Bearer y no recibe parámetros. Devuelve `200` con `{ "account": { ... } }` para el cliente autenticado, o `401` si el token falta o ya no es válido.
+
+- `client` contiene `id`, `business_name` y `tax_id`.
+- `debt` es la suma de los saldos impagos, como string decimal en ARS. `overdue_charges` cuenta las cuotas con estado `overdue`.
+- `unpaid_charges` lista cuotas con saldo, ordenadas por `due_on` de menor a mayor. Cada cuota expone `id`, `period` (`YYYY-MM`), `due_on` (`YYYY-MM-DD`), `status`, `amount`, `paid_amount`, `balance` y `days_overdue`. Los importes son strings decimales. La API solo informa días de atraso para cuotas con estado `overdue`.
+- `recent_payments` lista hasta cinco pagos, del más reciente al más antiguo según `paid_on`. Cada pago incluye `id`, `paid_on`, `amount`, `payment_method` (`transfer`, `cash`, `check`), `status` (`pending_review`, `confirmed`, `rejected`), `notes`, `created_at` y `receipt`. El comprobante puede ser `null` o incluir `filename`, `content_type`, `byte_size` y `url`. Los pagos en revisión todavía no se imputan al saldo.
+
+Respuesta `200` de ejemplo:
+
+```json
+{
+  "account": {
+    "client": { "id": 21, "business_name": "Cliente de demo", "tax_id": "30-12345678-0" },
+    "debt": "100000.00",
+    "overdue_charges": 1,
+    "unpaid_charges": [
+      { "id": 12, "period": "2026-10", "due_on": "2026-10-21", "status": "overdue", "amount": "100000.00", "paid_amount": "0.00", "balance": "100000.00", "days_overdue": 29 }
+    ],
+    "recent_payments": [
+      { "id": 5, "paid_on": "2026-11-14", "amount": "40000.00", "payment_method": "transfer", "status": "pending_review", "notes": null, "created_at": "2026-11-14T12:00:00Z", "receipt": null }
+    ]
+  }
+}
+```
+
+Si el cliente no tiene cuotas impagas, `debt` es `"0.00"` y `unpaid_charges` está vacío. `recent_payments` puede tener datos en ese caso.
+
+## Informar pago
+
+`POST /payments` requiere Bearer. Recibe los campos al nivel raíz en JSON o `multipart/form-data`. El portal usa multipart si hay un comprobante y JSON si no lo hay. El navegador genera el encabezado `Content-Type` con el límite entre partes del formulario multipart.
+
+| Campo | Tipo y validación |
+|---|---|
+| `amount` | Obligatorio. String decimal en ARS, mayor que cero y con hasta dos decimales. El portal admite coma o punto y envía punto como separador. |
+| `paid_on` | Obligatorio. Fecha en formato `YYYY-MM-DD`. |
+| `payment_method` | Obligatorio. `transfer`, `cash` o `check`. |
+| `notes` | String opcional. |
+| `receipt` | Archivo opcional en multipart. PDF, JPG o PNG de hasta 5 MB. Rails verifica el tipo de archivo. |
+
+Ejemplo de solicitud JSON:
+
+```json
+{ "amount": "15000.50", "paid_on": "2026-11-19", "payment_method": "transfer" }
+```
+
+Respuesta `201` de ejemplo:
+
+```json
+{
+  "payment": {
+    "id": 39, "amount": "15000.50", "paid_on": "2026-11-19", "payment_method": "transfer",
+    "status": "pending_review", "notes": null, "created_at": "2026-11-19T11:00:00Z", "receipt": null
+  }
+}
+```
+
+Un pago informado queda en `pending_review`. El saldo no cambia hasta que un administrador lo confirma, momento en que Rails aplica el pago a las cuotas impagas más antiguas. Si se adjuntó un archivo, `receipt` devuelve sus metadatos y la URL de descarga, igual que en `GET /account`.
+
+Un token ausente o inválido da `401`. Ejemplo de validación `422` para un adjunto de tipo incorrecto:
+
+```json
+{ "error": { "status": 422, "message": "No se pudo guardar.", "details": ["Comprobante debe ser PDF, JPG o PNG"] } }
+```
+
 ## Errores
 
 Rails devuelve un objeto `error` con `status` (número), `message` (texto) y `details` (lista de mensajes, opcional). Ejemplo de `404`:

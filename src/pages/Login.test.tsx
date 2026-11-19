@@ -4,6 +4,7 @@ import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { accountKey } from '../api/account'
 import { getToken } from '../api/auth'
 import { AppRoutes } from '../routes/AppRoutes'
 
@@ -45,6 +46,15 @@ describe('Login del portal', () => {
   it('protege la ruta, retoma el destino después del login y revoca la sesión al salir', async () => {
     let respondToLogin!: (response: Response) => void
     fetchMock.mockImplementationOnce(() => new Promise((resolve) => { respondToLogin = resolve }))
+    fetchMock.mockResolvedValueOnce(Response.json({
+      account: {
+        client: { id: 1, business_name: 'Cliente de prueba', tax_id: null },
+        debt: '0.00',
+        overdue_charges: 0,
+        unpaid_charges: [],
+        recent_payments: [],
+      },
+    }))
     fetchMock.mockResolvedValueOnce(new Response(null, { status: 204 }))
 
     const { queryClient, user } = renderPortal('/account')
@@ -57,6 +67,7 @@ describe('Login del portal', () => {
 
     respondToLogin(Response.json({ token: 'token-de-prueba' }, { status: 201 }))
     expect(await screen.findByRole('heading', { name: 'Estado de cuenta' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'No tenés cuotas impagas' })).toBeInTheDocument()
     expect(getToken()).toBe('token-de-prueba')
     expect(fetchMock).toHaveBeenNthCalledWith(1, '/api/v1/login', expect.objectContaining({
       method: 'POST',
@@ -64,13 +75,13 @@ describe('Login del portal', () => {
     }))
     expect(new Headers(fetchMock.mock.calls[0][1]?.headers).has('Authorization')).toBe(false)
 
-    queryClient.setQueryData(['account'], { debt: '123.00' })
+    expect(queryClient.getQueryData(accountKey)).toBeDefined()
     await user.click(screen.getByRole('button', { name: 'Salir' }))
     expect(await screen.findByRole('heading', { name: 'Ingresar' })).toBeInTheDocument()
-    expect(fetchMock).toHaveBeenNthCalledWith(2, '/api/v1/logout', expect.objectContaining({ method: 'DELETE' }))
-    expect(new Headers(fetchMock.mock.calls[1][1]?.headers).get('Authorization')).toBe('Bearer token-de-prueba')
+    expect(fetchMock).toHaveBeenNthCalledWith(3, '/api/v1/logout', expect.objectContaining({ method: 'DELETE' }))
+    expect(new Headers(fetchMock.mock.calls[2][1]?.headers).get('Authorization')).toBe('Bearer token-de-prueba')
     expect(getToken()).toBeNull()
-    expect(queryClient.getQueryData(['account'])).toBeUndefined()
+    expect(queryClient.getQueryData(accountKey)).toBeUndefined()
   })
 
   it('marca campos obligatorios y no llama a la API si están vacíos', async () => {

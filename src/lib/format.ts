@@ -8,6 +8,12 @@ const timestampFormatter = new Intl.DateTimeFormat('es-AR', {
   timeZone: 'America/Argentina/Buenos_Aires',
 })
 
+const periodFormatter = new Intl.DateTimeFormat('es-AR', {
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'UTC',
+})
+
 const amountFormatter = new Intl.NumberFormat('es-AR', {
   style: 'currency',
   currency: 'ARS',
@@ -22,6 +28,10 @@ export function formatDate(date: string): string {
 
 export function formatMoney(amount: string): string {
   return amountFormatter.format(Number(amount))
+}
+
+export function formatPeriod(period: string): string {
+  return periodFormatter.format(new Date(`${period}-01`))
 }
 
 export function formatHours(hours: string): string {
