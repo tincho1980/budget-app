@@ -2,8 +2,8 @@
 
 Trabajo Práctico N.º 2 de Programación IV (UTN), modalidad individual. El portal permite consultar proyectos, revisar y decidir presupuestos, consultar el estado de cuenta e informar pagos. El back-office administrativo sigue en Rails.
 
-- Frontend: [tincho1980/budget-app](https://github.com/tincho1980/budget-app), con React 19, TypeScript, Vite 8, Tailwind CSS 4, React Router 7 y TanStack Query 5.
-- Backend del TP1: [tincho1980/budget-api](https://github.com/tincho1980/budget-api), desarrollado por `tincho1980` con Ruby on Rails 8.1 y PostgreSQL.
+- Frontend: [tincho1980/budget-app en `develop`](https://github.com/tincho1980/budget-app/tree/develop), con React 19, TypeScript, Vite 8, Tailwind CSS 4, React Router 7 y TanStack Query 5.
+- Backend del TP1: [tincho1980/budget-api en `develop`](https://github.com/tincho1980/budget-api/tree/develop), desarrollado por `tincho1980` con Ruby on Rails 8.1 y PostgreSQL.
 - [Contrato de la API](docs/CONTRATO-API.md) · [Pendientes de publicación](docs/PENDIENTES.md).
 
 ## Ejecutar en local
@@ -73,11 +73,13 @@ Rails verifica el token Bearer y el acceso a los datos de cada cliente. El front
 
 El backend está publicado en [Render](https://adavra-sales.onrender.com/up). La URL base de la API es `https://adavra-sales.onrender.com/api/v1`.
 
-Si necesitás recrear el servicio, seguí el [Blueprint y la guía de Render del backend](https://github.com/tincho1980/budget-api/blob/feat/deploy-render/README.md#deploy-en-render). El Blueprint usa dos conexiones directas a Neon (`DATABASE_URL` y `QUEUE_DATABASE_URL`) y un bucket compatible con S3 para Active Storage. Si cargás datos de demo en el entorno publicado, configurá allí una `SEED_PASSWORD` propia.
+Si necesitás recrear el servicio, seguí el [Blueprint y la guía de Render del backend](https://github.com/tincho1980/budget-api/blob/develop/README.md#deploy-en-render). El Blueprint usa dos conexiones directas a Neon (`DATABASE_URL` y `QUEUE_DATABASE_URL`) y un bucket compatible con S3 para Active Storage. Si cargás datos de demo en el entorno publicado, configurá allí una `SEED_PASSWORD` propia.
 
-Para conectar el frontend publicado, Rails debe autorizar por CORS el origen HTTPS exacto del portal de Cloudflare, sin rutas. El cambio pendiente se describe en [Pendientes de publicación](docs/PENDIENTES.md#api-en-render).
+Rails autoriza por CORS el origen del portal de Cloudflare, configurado en Render con `FRONTEND_ORIGIN=https://budget-app.miramallo.workers.dev`. El [comando de prueba](docs/PENDIENTES.md#api-en-render) permite verificar que la API sigue aceptando ese origen.
 
 ### Frontend en Cloudflare
+
+El portal está publicado en [Cloudflare](https://budget-app.miramallo.workers.dev/login).
 
 [`wrangler.jsonc`](wrangler.jsonc) sirve `dist` con Workers Static Assets en [modo SPA](https://developers.cloudflare.com/workers/static-assets/routing/single-page-application/). Esto permite abrir o recargar rutas como `/account` y `/budgets/63` directamente. `VITE_API_URL` va en el entorno de **compilación** y debe apuntar a la URL HTTPS de Render terminada en `/api/v1`. Es una URL pública; guardá los secretos del backend en Render.
 
@@ -94,4 +96,4 @@ En Bash, usá `export VITE_API_URL='https://adavra-sales.onrender.com/api/v1'` e
 
 Si preferís [Workers Builds desde GitHub](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/), conectá este repo y seleccioná la rama que contiene el portal. Configurá `pnpm run build:cloudflare` como comando de build, `pnpm exec wrangler deploy` como comando de deploy y `VITE_API_URL` en las variables del build.
 
-Cuando el portal esté publicado, verificá el login desde Cloudflare, la apertura directa de una ruta privada, la persistencia de una decisión sobre un presupuesto y el envío y descarga de un comprobante. Agregá la URL pública del portal a este README.
+Para validar la entrega, verificá el login desde Cloudflare, la apertura directa de una ruta privada, la persistencia de una decisión sobre un presupuesto y el envío y descarga de un comprobante.

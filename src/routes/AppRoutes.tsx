@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
+import { isSessionStorageUpdate } from '../api/auth'
 import { Layout } from '../components/Layout.tsx'
 import { Account } from '../pages/Account'
 import { BudgetDetail } from '../pages/BudgetDetail'
@@ -9,6 +11,16 @@ import { ReportPayment } from '../pages/ReportPayment'
 import { ProtectedRoute } from './ProtectedRoute'
 
 export function AppRoutes() {
+  useEffect(() => {
+    function syncSession(event: StorageEvent) {
+      // Reload when another tab changes the session so its data cache starts empty.
+      if (isSessionStorageUpdate(event)) window.location.reload()
+    }
+
+    window.addEventListener('storage', syncSession)
+    return () => window.removeEventListener('storage', syncSession)
+  }, [])
+
   return (
     <Routes>
       <Route path="/login" element={<Login />} />

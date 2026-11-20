@@ -1,11 +1,11 @@
 import { onlineManager, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import '@testing-library/jest-dom/vitest'
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { accountKey } from '../api/account'
-import { getToken } from '../api/auth'
+import { getSessionIdentity, getToken } from '../api/auth'
 import { AppRoutes } from '../routes/AppRoutes'
 
 const fetchMock = vi.fn<typeof fetch>()
@@ -65,10 +65,23 @@ describe('Login del portal', () => {
     await user.click(screen.getByRole('button', { name: 'Ingresar' }))
     expect(await screen.findByRole('button', { name: 'Ingresando…' })).toBeDisabled()
 
-    respondToLogin(Response.json({ token: 'token-de-prueba' }, { status: 201 }))
+    respondToLogin(Response.json({
+      token: 'token-de-prueba',
+      user: { name: 'Usuario de prueba', email_address: 'cliente@example.test' },
+      client: { business_name: 'Cliente de prueba' },
+    }, { status: 201 }))
     expect(await screen.findByRole('heading', { name: 'Estado de cuenta' })).toBeInTheDocument()
     expect(await screen.findByRole('heading', { name: 'No tenés cuotas impagas' })).toBeInTheDocument()
     expect(getToken()).toBe('token-de-prueba')
+    const profile = within(screen.getByRole('group', { name: 'Sesión actual' }))
+    expect(profile.getByText('Usuario de prueba')).toBeInTheDocument()
+    expect(profile.getByText('Cliente de prueba')).toBeInTheDocument()
+    expect(profile.getByText('cliente@example.test')).toBeInTheDocument()
+    expect(getSessionIdentity()).toEqual({
+      name: 'Usuario de prueba',
+      businessName: 'Cliente de prueba',
+      email: 'cliente@example.test',
+    })
     expect(fetchMock).toHaveBeenNthCalledWith(1, '/api/v1/login', expect.objectContaining({
       method: 'POST',
       body: JSON.stringify({ email_address: 'cliente@example.test', password: 'contraseña-de-prueba' }),
@@ -81,6 +94,7 @@ describe('Login del portal', () => {
     expect(fetchMock).toHaveBeenNthCalledWith(3, '/api/v1/logout', expect.objectContaining({ method: 'DELETE' }))
     expect(new Headers(fetchMock.mock.calls[2][1]?.headers).get('Authorization')).toBe('Bearer token-de-prueba')
     expect(getToken()).toBeNull()
+    expect(getSessionIdentity()).toBeNull()
     expect(queryClient.getQueryData(accountKey)).toBeUndefined()
   })
 
