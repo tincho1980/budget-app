@@ -45,8 +45,8 @@ export function Login() {
     mutationFn: createSession,
     networkMode: 'always',
     gcTime: 0,
-    onSuccess: (token) => {
-      setToken(token)
+    onSuccess: ({ token, identity }) => {
+      setToken(token, identity)
       navigate(destination, { replace: true })
     },
   })
