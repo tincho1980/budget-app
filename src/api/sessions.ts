@@ -1,3 +1,4 @@
+import { isSessionIdentity, type PortalSession } from './auth'
 import { apiRequest } from './client'
 
 type LoginCredentials = {
@@ -5,8 +6,14 @@ type LoginCredentials = {
   password: string
 }
 
-export async function createSession(credentials: LoginCredentials): Promise<string> {
-  const session = await apiRequest<{ token: string }>('/login', {
+type LoginResponse = {
+  token: string
+  user?: { name: string; email_address: string }
+  client?: { business_name: string }
+}
+
+export async function createSession(credentials: LoginCredentials): Promise<PortalSession> {
+  const session = await apiRequest<LoginResponse>('/login', {
     method: 'POST',
     body: credentials,
     requiresAuth: false,
@@ -16,7 +23,13 @@ export async function createSession(credentials: LoginCredentials): Promise<stri
     throw new Error('La API no devolvió un token de acceso. Intentá de nuevo.')
   }
 
-  return session.token
+  const identity = {
+    name: session.user?.name,
+    email: session.user?.email_address,
+    businessName: session.client?.business_name,
+  }
+
+  return { token: session.token, identity: isSessionIdentity(identity) ? identity : undefined }
 }
 
 export function destroySession(): Promise<void> {
